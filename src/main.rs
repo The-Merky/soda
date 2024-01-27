@@ -23,6 +23,12 @@ impl Mul for &Value {
         }
     }
 }
-fn main(){
-
+impl Value {
+    fn new(data: f64) -> Value {
+        Value {
+            data: data,
+            children: vec![],
+        }
+    }
 }
+fn main(){}
