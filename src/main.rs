@@ -31,4 +31,11 @@ impl Value {
         }
     }
 }
-fn main(){}
+fn main() {
+    let a = Value::new(5.0);
+    let b = Value::new(8.0);
+    let c = &a + &b;
+    let d = &a * &b;
+    println!("{}", c.data);
+    println!("{}", d.data);
+}
