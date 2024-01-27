@@ -1,1 +1,1 @@
-# ml-rs
+# machine learning library
