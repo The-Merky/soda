@@ -18,15 +18,9 @@ pub struct Layer {
     pub activation_result: DVector<f64>,
 } 
 impl Layer {
-    pub fn new(size: usize, is_input: bool, activation_function: ActivationFunction) -> Layer {
-        if (is_input) {
-            Layer {
-                weights: DMatrix::from_element(size, size, 1.0),
-                biases: DVector::from_element(size, 1.0),
-                activation_fn: activation_function,
-                activation_result :DVector::from_element(size, 1.0),
-            }
-        } else {
+    pub fn new(size: usize, activation_function: ActivationFunction) -> Layer {
+        
+    
             let mut rng = rand::thread_rng();
             Layer{
             //Random weights between 1 and -1
@@ -37,4 +31,4 @@ impl Layer {
            }
         }
     }
-}
+
