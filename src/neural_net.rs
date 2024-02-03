@@ -1,6 +1,7 @@
+use crate::layer::Layer;
 // Neural Network struct which contains a vector of layers and can backpropagate and feed forward
 // TODO backpropagate and feed forward
-struct NeuralNet {
+pub struct NeuralNet {
     layers: Vec<Layer>,
 }
 impl NeuralNet {

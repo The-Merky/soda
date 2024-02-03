@@ -18,7 +18,7 @@ pub struct Layer {
     activation_fn: ActivationFunction,
     //Result of activation function
     pub activation_result: DVector<f64>,
-    layer_number: usize,
+    pub layer_number: usize,
 }
 impl Layer {
     pub fn new(size: usize, activation_function: ActivationFunction, layer_number: usize) -> Layer {
