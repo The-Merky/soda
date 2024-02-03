@@ -10,6 +10,7 @@ impl NeuralNet {
     }
     pub fn add_layer(&mut self, layer: Layer) {
         self.layers.push(layer);
+        self.verify_and_sort();
     }
     pub fn forward(&mut self) {
         self.verify_and_sort();
