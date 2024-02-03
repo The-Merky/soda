@@ -15,7 +15,7 @@ pub struct Layer {
     biases: DVector<f64>,
     activation_fn: ActivationFunction,
     //Result of activation function
-    pub activation_result: DVector<f64>,
+    pub activation_result: DMatrix<f64>,
     pub layer_number: usize,
 }
 impl Layer {
@@ -26,12 +26,14 @@ impl Layer {
             weights: DMatrix::from_fn(size, size, |_, _| rng.gen_range(-1.0..1.0)),
             biases: DVector::from_element(size, 1.0),
             activation_fn: activation_function,
-            activation_result: DVector::from_element(size, 1.0),
+            activation_result: DMatrix::from_element(size, size, 1.0),
             layer_number: layer_number,
         }
     }
-}
+    }
 
-pub fn sigmoid(layer: &Layer) -> DVector<f64> {
+
+pub fn sigmoid(layer: &Layer) -> DMatrix<f64> {
     layer.activation_result.map(|x| 1.0 / (1.0 + (-x).exp()))
 }
+

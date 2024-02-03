@@ -1,3 +1,5 @@
+use nalgebra::{DMatrix, DVector};
+
 use crate::layer::Layer;
 // Neural Network struct which contains a vector of layers and can backpropagate and feed forward
 // TODO backpropagate and feed forward
@@ -14,6 +16,10 @@ impl NeuralNet {
     }
     pub fn forward(&mut self) {
         self.verify_and_sort();
+        let mut last_activation = DMatrix::from_element(1, 1, 1);
+        for i in &self.layers{
+            break; 
+        }
     }
     pub fn verify_and_sort(&mut self) {
         //Ensure that there are no duplicate layer numbers
