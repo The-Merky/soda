@@ -10,13 +10,18 @@ impl NeuralNet {
     }
     pub fn add_layer(&mut self, layer: Layer) {
         self.layers.push(layer);
-        //Sort layers
-        self.layers.sort_by_key(|layer| layer.layer_number);
+    }
+    pub fn forward(&mut self) {
+        self.verify_and_sort();
+    }
+    pub fn verify_and_sort(&mut self) {
         //Ensure that there are no duplicate layer numbers
         for i in 0..self.layers.len() - 1 {
             if self.layers[i].layer_number == self.layers[i + 1].layer_number {
                 panic!("Duplicate layer numbers not allowed");
             }
         }
+        //Sort layers
+        self.layers.sort_by_key(|layer| layer.layer_number);
     }
 }

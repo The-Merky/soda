@@ -1,5 +1,3 @@
-use core::num;
-
 use nalgebra::{DMatrix, DVector};
 use rand::Rng;
 /*
@@ -32,4 +30,8 @@ impl Layer {
             layer_number: layer_number,
         }
     }
+}
+
+pub fn sigmoid(layer: &Layer) -> DVector<f64> {
+    layer.activation_result.map(|x| 1.0 / (1.0 + (-x).exp()))
 }
