@@ -19,11 +19,11 @@ pub struct Layer {
     pub layer_number: usize,
 }
 impl Layer {
-    pub fn new(size: usize, activation_function: ActivationFunction, layer_number: usize) -> Layer {
+    pub fn new(size: usize, activation_function: ActivationFunction, layer_number: usize, weights:usize) -> Layer {
         let mut rng = rand::thread_rng();
         Layer {
             //Random weights between 1 and -1
-            weights: DMatrix::from_fn(size, size, |_, _| rng.gen_range(-1.0..1.0)),
+            weights: DMatrix::from_fn(size, weights, |_, _| rng.gen_range(-1.0..1.0)),
             biases: DVector::from_element(size, 1.0),
             activation_fn: activation_function,
             activation_result: DMatrix::from_element(size, size, 1.0),
