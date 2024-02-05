@@ -1,6 +1,6 @@
 use nalgebra::{DMatrix, DVector};
 
-use crate::layer::Layer;
+use crate::layer::{self, Layer};
 // Neural Network struct which contains a vector of layers and can backpropagate and feed forward
 // TODO backpropagate and feed forward
 pub struct NeuralNet {
@@ -18,7 +18,7 @@ impl NeuralNet {
         self.verify_and_sort();
         let mut last_activation = DMatrix::from_element(1, 1, 1);
         for i in &self.layers{
-            break; 
+            
         }
     }
     pub fn verify_and_sort(&mut self) {
@@ -30,5 +30,29 @@ impl NeuralNet {
         }
         //Sort layers
         self.layers.sort_by_key(|layer| layer.layer_number);
+    }
+    //Activation functions
+fn sigmoid(activation: &DMatrix<f64>) -> DMatrix<f64> {
+    activation.map(|x| 1.0 / (1.0 + (-x).exp()))
+    }
+fn relu(activation: &DMatrix<f64>) -> DMatrix<f64> {
+        activation.map(|x|   if x > 0.0 {
+        x
+    } else {
+        0.0
+    })
+    }
+fn softmax(activation: &DMatrix<f64>) -> DMatrix<f64>{
+           let exp_values = activation.map(|x| x.exp());
+    let sum_exp: f64 = exp_values.iter().sum();
+    exp_values / sum_exp
+    }
+pub fn apply_activation_fn(layer: &mut Layer){
+        match layer.activation_fn{
+            layer::ActivationFunction::Tanh=> layer.activation_result = layer.activation_result.map(|x| x.tanh()),
+            layer::ActivationFunction::Sigmoid => layer.activation_result = NeuralNet::sigmoid(&layer.activation_result),
+            layer::ActivationFunction::Relu => layer.activation_result = NeuralNet::relu(&layer.activation_result),
+            layer::ActivationFunction::Softmax => layer.activation_result = NeuralNet::softmax(&layer.activation_result),
+        }
     }
 }
