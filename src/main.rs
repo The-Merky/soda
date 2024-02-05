@@ -1,3 +1,5 @@
+use std::ops::Mul;
+
 pub mod neural_net;
 pub mod layer;
 fn main() {
