@@ -6,7 +6,7 @@ use crate::layer::{self, ActivationFunction, Layer};
 // Neural Network struct which contains a vector of layers and can backpropagate and feed forward
 // TODO backpropagate and feed forward
 pub struct NeuralNet {
-    layers: Vec<Layer>,
+    pub layers: Vec<Layer>,
 }
 impl NeuralNet {
     pub fn new() -> NeuralNet {
@@ -19,23 +19,19 @@ impl NeuralNet {
         activation_function: ActivationFunction,
     ) {
         if layer_number == 0 {
-            self.layers[1] = layer::Layer::new(layer_size, activation_function, layer_number, 1);
+            self.layers.insert(
+                0,
+                layer::Layer::new(layer_size, activation_function, layer_number, 1),
+            );
         } else {
+         
             self.layers.push(layer::Layer::new(
                 layer_size,
                 activation_function,
                 layer_number,
-                {
-                    if Some(&self.layers[layer_number - 1]).is_some() {
-                        self.layers[layer_number - 1].biases.ncols()
-                    } else {
-                        panic!("Previous Layer is not set!");
-                    }
-                },
+                self.layers[layer_number-1].weights.ncols(),
             ));
         }
-        let mut last_activation = DMatrix::from_element(1, 1, 1);
-        for i in &self.layers {}
     }
     pub fn verify_and_sort(&mut self) {
         //Ensure that there are no duplicate layer numbers
@@ -75,20 +71,19 @@ impl NeuralNet {
             }
         }
     }
-   
-    pub fn forward(&mut self) {
-    let mut previous_layer: Option<&Layer> = None;
-    for current_layer in &mut self.layers {
-        if let Some(prev) = previous_layer {
-            current_layer.activation_result = current_layer.weights.clone() * prev.activation_result.clone();
-            current_layer.activation_result += current_layer.biases.clone();
-            NeuralNet::apply_activation_fn(current_layer);
+
+    pub fn forward(&mut self, input: &DMatrix<f64>) {
+        let mut previous_layer: Option<&Layer> = None;
+        for current_layer in &mut self.layers {
+            if let Some(prev) = previous_layer {
+                current_layer.activation_result =
+                    current_layer.weights.clone() * prev.activation_result.clone();
+                current_layer.activation_result += current_layer.biases.clone();
+                NeuralNet::apply_activation_fn(current_layer);
+            } else {
+                current_layer.activation_result = (*input).clone();
+            }
+            previous_layer = Some(current_layer);
         }
-        previous_layer = Some(current_layer);
     }
 }
-} 
-    
-    
-
-
