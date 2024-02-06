@@ -75,4 +75,20 @@ impl NeuralNet {
             }
         }
     }
+   
+    pub fn forward(&mut self) {
+    let mut previous_layer: Option<&Layer> = None;
+    for current_layer in &mut self.layers {
+        if let Some(prev) = previous_layer {
+            current_layer.activation_result = current_layer.weights.clone() * prev.activation_result.clone();
+            current_layer.activation_result += current_layer.biases.clone();
+            NeuralNet::apply_activation_fn(current_layer);
+        }
+        previous_layer = Some(current_layer);
+    }
 }
+} 
+    
+    
+
+

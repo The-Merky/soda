@@ -11,7 +11,7 @@ pub enum ActivationFunction {
     Softmax,
 }
 pub struct Layer {
-    weights: DMatrix<f64>,
+    pub weights: DMatrix<f64>,
     pub biases: DVector<f64>,
     pub activation_fn: ActivationFunction,
     //Result of activation function
