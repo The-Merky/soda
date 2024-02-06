@@ -1,6 +1,8 @@
-use nalgebra::{DMatrix, DVector};
+use core::panic;
 
-use crate::layer::{self, Layer};
+use nalgebra::{DMatrix};
+
+use crate::layer::{self, ActivationFunction, Layer};
 // Neural Network struct which contains a vector of layers and can backpropagate and feed forward
 // TODO backpropagate and feed forward
 pub struct NeuralNet {
@@ -10,10 +12,16 @@ impl NeuralNet {
     pub fn new() -> NeuralNet {
         NeuralNet { layers: Vec::new() }
     }
-    pub fn add_layer(&mut self, layer: Layer) {
-    }
-    pub fn forward(&mut self) {
-        self.verify_and_sort();
+    pub fn add_layer(&mut self, layer_number: usize, layer_size: usize, activation_function: ActivationFunction) {
+        if layer_number == 0 {
+            self.layers[1] = layer::Layer::new(layer_size, activation_function, layer_number, 1);      
+        } else {
+            self.layers.push(layer::Layer::new(layer_size, activation_function, layer_number, { if Some(&self.layers[layer_number-1]).is_some(){
+                self.layers[layer_number-1].biases.ncols()
+            }  else {
+                panic!("Previous Layer is not set!");
+            }}))
+        }
         let mut last_activation = DMatrix::from_element(1, 1, 1);
         for i in &self.layers{
             
