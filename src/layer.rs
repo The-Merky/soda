@@ -1,4 +1,4 @@
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{ DMatrix, DVector };
 use rand::Rng;
 /*
 Layer struct for neural networks
@@ -19,15 +19,19 @@ pub struct Layer {
     pub layer_number: usize,
 }
 impl Layer {
-    pub fn new(size: usize, activation_function: ActivationFunction, layer_number: usize, weights:usize) -> Layer {
+    pub fn new(
+        size: usize,
+        activation_function: ActivationFunction,
+        layer_number: usize,
+        weights: usize
+    ) -> Layer {
         let mut rng = rand::thread_rng();
         let weights_field = {
-            if weights >1{
+            if weights > 1 {
                 DMatrix::from_fn(size, weights, |_, _| rng.gen_range(-1.0..1.0))
             } else {
                 DMatrix::from_element(size, size, 1.0)
-            } 
-
+            }
         };
         Layer {
             //Random weights between 1 and -1
@@ -38,9 +42,4 @@ impl Layer {
             layer_number,
         }
     }
-    
-
-    
-
-
 }
