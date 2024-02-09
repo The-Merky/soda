@@ -1,10 +1,11 @@
 use core::panic;
 
+
 use nalgebra::DMatrix;
 
 use crate::layer::{self, ActivationFunction, Layer};
 // Neural Network struct which contains a vector of layers and can backpropagate and feed forward
-// TODO backpropagate and feed forward
+// TODO backpropagate
 pub struct NeuralNet {
     pub layers: Vec<Layer>,
 }
@@ -24,12 +25,11 @@ impl NeuralNet {
                 layer::Layer::new(layer_size, activation_function, layer_number, 1),
             );
         } else {
-         
             self.layers.push(layer::Layer::new(
                 layer_size,
                 activation_function,
                 layer_number,
-                self.layers[layer_number-1].weights.ncols(),
+                self.layers[layer_number - 1].weights.ncols(),
             ));
         }
     }
@@ -85,5 +85,15 @@ impl NeuralNet {
             }
             previous_layer = Some(current_layer);
         }
+    }
+    pub fn loss(&mut self, expected: DMatrix<f64>) ->f64{
+    assert_eq!(self.layers[self.layers.len()-1].activation_result.nrows(), expected.nrows(), "Input vectors must have the same dimension.");
+
+    let diff = self.layers[self.layers.len()-1].activation_result.clone() - expected.clone();
+    let squared_diff = diff.map(|x| x.powi(2));
+    let sum_squared_diff = squared_diff.sum();
+    let mean_squared_diff = sum_squared_diff / expected.nrows() as f64;
+
+    mean_squared_diff
     }
 }
