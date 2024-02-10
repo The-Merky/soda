@@ -24,6 +24,7 @@ impl NeuralNet {
                 0,
                 layer::Layer::new(layer_size, activation_function, layer_number, 1),
             );
+            self.verify_and_sort();
         } else {
             self.layers.push(layer::Layer::new(
                 layer_size,
@@ -31,6 +32,7 @@ impl NeuralNet {
                 layer_number,
                 self.layers[layer_number - 1].weights.ncols(),
             ));
+            self.verify_and_sort();
         }
     }
     pub fn verify_and_sort(&mut self) {
@@ -86,14 +88,14 @@ impl NeuralNet {
             previous_layer = Some(current_layer);
         }
     }
-    pub fn loss(&mut self, expected: DMatrix<f64>) ->f64{
+    pub fn loss(&mut self, expected: &DMatrix<f64>) ->f64{
     assert_eq!(self.layers[self.layers.len()-1].activation_result.nrows(), expected.nrows(), "Input vectors must have the same dimension.");
 
     let diff = self.layers[self.layers.len()-1].activation_result.clone() - expected.clone();
     let squared_diff = diff.map(|x| x.powi(2));
     let sum_squared_diff = squared_diff.sum();
-    let mean_squared_diff = sum_squared_diff / expected.nrows() as f64;
+    
 
-    mean_squared_diff
+    sum_squared_diff / expected.nrows() as f64
     }
 }
