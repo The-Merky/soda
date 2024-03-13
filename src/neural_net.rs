@@ -49,7 +49,9 @@ impl NeuralNet {
         activation.map(|x| 1.0 / (1.0 + (-x).exp()))
     }
     fn sigmoid_prime(activation: &DMatrix<f64> )-> DMatrix<f64>{
-        activation.map(|x| 1.0 / (1.0 + (-x).exp()) * (1-(1.0 / (1.0 + (-x).exp())))
+        activation.map(|x| {
+            1.0 / (1.0 + (-x).exp()) * (1 - (1.0 / (1.0 + (-x).exp())))
+        })
     }
     fn relu(activation: &DMatrix<f64>) -> DMatrix<f64> {
         activation.map(|x| if x > 0.0 { x } else { 0.0 })
