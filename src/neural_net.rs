@@ -48,10 +48,8 @@ impl NeuralNet {
     fn sigmoid(activation: &DMatrix<f64>) -> DMatrix<f64> {
         activation.map(|x| 1.0 / (1.0 + (-x).exp()))
     }
-    fn sigmoid_prime(activation: &DMatrix<f64> )-> DMatrix<f64>{
-        activation.map(|x| {
-            1.0 / (1.0 + (-x).exp()) * (1 - (1.0 / (1.0 + (-x).exp())))
-        })
+    fn sigmoid_prime(activation: &DMatrix<f64>) -> DMatrix<f64> {
+        activation.map(|x| 1.0 / (1.0 + (-x).exp()) * (1.0 - (1.0 / (1.0 + (-x).exp()))))
     }
     fn relu(activation: &DMatrix<f64>) -> DMatrix<f64> {
         activation.map(|x| if x > 0.0 { x } else { 0.0 })
@@ -92,15 +90,23 @@ impl NeuralNet {
             previous_layer = Some(current_layer);
         }
     }
-    pub fn loss(&mut self, expected: &DMatrix<f64>) -> f64 {
+    pub fn loss(&mut self, expected: &DMatrix<f64>) -> DMatrix<f64> {
         assert_eq!(
             self.layers[self.layers.len() - 1].activation_result.nrows(),
             expected.nrows(),
             "Input vectors must have the same dimension."
         );
         // (Sum of all Result - Expected) ^2
-        (self.layers[self.layers.len() - 1].activation_result.clone() - expected)
-            .map(|x| x.powi(2))
-            .sum()
+        let diff = self.layers[self.layers.len() - 1].activation_result.clone() - expected;
+        diff.map(|x| x.powi(2))
+    }
+    fn loss_prime(&mut self, expected: &DMatrix<f64>) -> DMatrix<f64> {
+        assert_eq!(
+            self.layers[self.layers.len() - 1].activation_result.nrows(),
+            expected.nrows(),
+            "Input vectors must have the same dimension."
+        );
+        let diff = self.layers[self.layers.len() - 1].activation_result.clone() - expected;
+        diff.map(|x| x * 2.0)
     }
 }
