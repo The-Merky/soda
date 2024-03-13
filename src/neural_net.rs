@@ -1,11 +1,10 @@
 use core::panic;
 
-
-use nalgebra::{coordinates::X, DMatrix};
+use nalgebra::DMatrix;
 
 use crate::layer::{self, ActivationFunction, Layer};
-// Neural Network struct which contains a vector of layers and can backpropagate and feed forward
-// TODO backpropagate
+// Neural Network Struct which contains a vector of layers and can backpropagate and feed forward
+// TODO backpropagation
 pub struct NeuralNet {
     pub layers: Vec<Layer>,
 }
@@ -49,6 +48,9 @@ impl NeuralNet {
     fn sigmoid(activation: &DMatrix<f64>) -> DMatrix<f64> {
         activation.map(|x| 1.0 / (1.0 + (-x).exp()))
     }
+    fn sigmoid_prime(activation: &DMatrix<f64> )-> DMatrix<f64>{
+        activation.map(|x| 1.0 / (1.0 + (-x).exp()) * (1-(1.0 / (1.0 + (-x).exp())))
+    }
     fn relu(activation: &DMatrix<f64>) -> DMatrix<f64> {
         activation.map(|x| if x > 0.0 { x } else { 0.0 })
     }
@@ -77,20 +79,26 @@ impl NeuralNet {
     pub fn forward(&mut self, input: &DMatrix<f64>) {
         let mut previous_layer: Option<&Layer> = None;
         for current_layer in &mut self.layers {
-            if let Some(prev) = previous_layer {
-                current_layer.activation_result =
-                    current_layer.weights.clone() * prev.activation_result.clone();
-                current_layer.activation_result += current_layer.biases.clone();
+            if previous_layer.is_some() {
+                current_layer.activation_result = current_layer.weights.clone()
+                    * previous_layer.unwrap().activation_result.clone();
                 NeuralNet::apply_activation_fn(current_layer);
+                current_layer.activation_result += current_layer.biases.clone();
             } else {
                 current_layer.activation_result = (*input).clone();
             }
             previous_layer = Some(current_layer);
         }
     }
-    pub fn loss(&mut self, expected: &DMatrix<f64>) ->f64{
-    assert_eq!(self.layers[self.layers.len()-1].activation_result.nrows(), expected.nrows(), "Input vectors must have the same dimension.");
-    // (Sum of all Result - Expected) ^2
-    (self.layers[self.layers.len()-1].activation_result.clone() - expected).map(|x|x.powi(2)).sum()
+    pub fn loss(&mut self, expected: &DMatrix<f64>) -> f64 {
+        assert_eq!(
+            self.layers[self.layers.len() - 1].activation_result.nrows(),
+            expected.nrows(),
+            "Input vectors must have the same dimension."
+        );
+        // (Sum of all Result - Expected) ^2
+        (self.layers[self.layers.len() - 1].activation_result.clone() - expected)
+            .map(|x| x.powi(2))
+            .sum()
     }
 }

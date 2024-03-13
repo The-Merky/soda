@@ -1,4 +1,4 @@
-use nalgebra::{ DMatrix, DVector };
+use nalgebra::{DMatrix, DVector};
 use rand::Rng;
 /*
 Layer struct for neural networks
@@ -23,7 +23,7 @@ impl Layer {
         size: usize,
         activation_function: ActivationFunction,
         layer_number: usize,
-        weights: usize
+        weights: usize,
     ) -> Layer {
         let mut rng = rand::thread_rng();
         let weights_field = {
