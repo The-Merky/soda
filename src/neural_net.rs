@@ -1,6 +1,6 @@
 use core::panic;
 
-use nalgebra::DMatrix;
+use nalgebra::{DMatrix, DVector};
 
 use crate::layer::{self, ActivationFunction, Layer};
 // Neural Network Struct which contains a vector of layers and can backpropagate and feed forward
@@ -21,7 +21,7 @@ impl NeuralNet {
         if layer_number == 0 {
             self.layers.insert(
                 0,
-                layer::Layer::new(layer_size, activation_function, layer_number, 1),
+                Layer::new(layer_size, activation_function, layer_number, 1),
             );
             self.verify_and_sort();
         } else {
@@ -61,16 +61,16 @@ impl NeuralNet {
     }
     pub fn apply_activation_fn(layer: &mut Layer) {
         match layer.activation_fn {
-            layer::ActivationFunction::Tanh => {
+            ActivationFunction::Tanh => {
                 layer.activation_result = layer.activation_result.map(|x| x.tanh());
             }
-            layer::ActivationFunction::Sigmoid => {
+            ActivationFunction::Sigmoid => {
                 layer.activation_result = NeuralNet::sigmoid(&layer.activation_result);
             }
-            layer::ActivationFunction::Relu => {
+            ActivationFunction::Relu => {
                 layer.activation_result = NeuralNet::relu(&layer.activation_result);
             }
-            layer::ActivationFunction::Softmax => {
+            ActivationFunction::Softmax => {
                 layer.activation_result = NeuralNet::softmax(&layer.activation_result);
             }
         }
@@ -89,6 +89,12 @@ impl NeuralNet {
             }
             previous_layer = Some(current_layer);
         }
+    }
+    fn backprop(&mut self, expected: &DMatrix<f64>){
+        let z_prime = Self::sigmoid_prime(&self.layers.last().unwrap().activation_result);
+        let loss_prime = self.loss_prime(expected);
+        let output_error = z_prime.component_mul(&loss_prime);
+        // let nerror = Self::sigmoid_prime(&self.layers[1].activation_result).component_mul(&(self.layers[2].weights.transpose().component_mul(&self.layers[2].activation_result)));
     }
     pub fn loss(&mut self, expected: &DMatrix<f64>) -> DMatrix<f64> {
         assert_eq!(
@@ -109,4 +115,6 @@ impl NeuralNet {
         let diff = self.layers[self.layers.len() - 1].activation_result.clone() - expected;
         diff.map(|x| x * 2.0)
     }
+
 }
+

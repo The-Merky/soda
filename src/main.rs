@@ -14,7 +14,4 @@ fn main() {
     n.forward(&DMatrix::from_element(3, 1, 4.0));
     println!("{}", n.layers[2].activation_result);
     println!("{}", n.loss(&DMatrix::from_element(3, 1, 0.5)));
-    /*
-    1.0-0.5
-     */
 }
