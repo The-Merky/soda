@@ -13,6 +13,7 @@ pub enum ActivationFunction {
 pub struct Layer {
     pub weights: DMatrix<f64>,
     pub biases: DVector<f64>,
+    pub activation: DVector<f64>,
     pub activation_fn: ActivationFunction,
     //Result of activation function
     pub activation_result: DMatrix<f64>,
@@ -37,6 +38,7 @@ impl Layer {
             //Random weights between 1 and -1
             weights: weights_field,
             biases: DVector::from_element(size, 1.0),
+            activation: DVector::from_element(size,1.0),
             activation_fn: activation_function,
             activation_result: DMatrix::from_element(size, size, 1.0),
             layer_number,
