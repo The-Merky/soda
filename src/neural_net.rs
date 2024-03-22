@@ -90,7 +90,24 @@ impl NeuralNet {
             previous_layer = Some(current_layer);
         }
     }
-
+    pub fn backward(&mut self, expected: &DVector<f64>) -> (Vec<DVector<f64>>, Vec<DVector<f64>>){
+        let mut w_grad : Vec<DVector<f64>> = Vec::new(); //Vector of weights
+        let mut b_grad : Vec<DVector<f64>> = Vec::new(); // Vector of biases
+        let output_error= DVector::from_column_slice(Self::sigmoid_prime(&self.layers.last().unwrap().activation_result).component_mul(&self.loss_prime(expected)).as_slice());
+        // Push the gradients of the output layer
+        w_grad.push(output_error.clone());
+        b_grad.push(&self.layers[self.layers.len() -1 ].activation_result * &output_error);
+        //let nerror =DVector::from_column_slice(Self::sigmoid_prime(&self.layers[n].activation_result).component_mul(&self.layers[n+1].weights.transpose().component_mul(&self.layers[n+1].activation_result)).as_slice());
+        let delta:DVector<f64>;
+        for layer in self.layers.iter().rev(){
+            if layer.layer_number != self.layers.len()-1 {
+                let delta_new = DVector::from_column_slice(Self::sigmoid_prime(&layer.activation_result).component_mul(&self.layers[layer.layer_number +1 ].weights.transpose().component_mul(&self.layers[layer.layer_number + 1 ].activation_result)).as_slice());
+                b_grad.push(delta_new.clone());
+                w_grad.push(&self.layers[layer.layer_number -1 ].activation_result *&delta_new);
+            }
+        }
+        (w_grad, b_grad)
+    }
     pub fn loss(&mut self, expected: &DVector<f64>) -> DVector<f64> {
         assert_eq!(
             self.layers[self.layers.len() - 1].activation_result.nrows(),
