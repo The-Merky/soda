@@ -1,4 +1,4 @@
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{DMatrix, DVector, VecStorage};
 use rand::Rng;
 /*
 Layer struct for neural networks
@@ -16,7 +16,7 @@ pub struct Layer {
     pub activation: DVector<f64>,
     pub activation_fn: ActivationFunction,
     //Result of activation function
-    pub activation_result: DMatrix<f64>,
+    pub activation_result: DVector<f64>,
     pub layer_number: usize,
 }
 impl Layer {
@@ -40,7 +40,7 @@ impl Layer {
             biases: DVector::from_element(size, 1.0),
             activation: DVector::from_element(size,1.0),
             activation_fn: activation_function,
-            activation_result: DMatrix::from_element(size, size, 1.0),
+            activation_result: DVector::from_element(size, 1.0),
             layer_number,
         }
     }
