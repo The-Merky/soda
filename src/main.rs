@@ -14,5 +14,7 @@ fn main() {
     n.forward(&DVector::from_element(3,  4.0));
     println!("{}", n.layers[2].activation_result);
     println!("{}", n.loss(&DVector::from_element(3, 0.5)));
-    n.backward(&DVector::from_element(3,4.0));
+    //n.backward(&DVector::from_element(3,4.0));
+    println!("{:?}", n.backward(&DVector::from_element(3, 4.0)).0);  
+
 }
