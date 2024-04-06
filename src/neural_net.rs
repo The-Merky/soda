@@ -9,6 +9,12 @@ use crate::layer::{ActivationFunction, Layer};
 pub struct NeuralNet {
     pub layers: Vec<Layer>,
 }
+impl Default for NeuralNet {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl NeuralNet {
     pub fn new() -> NeuralNet {
         NeuralNet { layers: Vec::new() }
@@ -81,8 +87,9 @@ impl NeuralNet {
         let mut previous_layer: Option<&Layer> = None;
         for current_layer in &mut self.layers {
             if previous_layer.is_some() {
-                current_layer.activation_result =
-                    &current_layer.weights * &previous_layer.unwrap().activation_result + &current_layer.biases;
+                current_layer.activation_result = &current_layer.weights
+                    * &previous_layer.unwrap().activation_result
+                    + &current_layer.biases;
                 NeuralNet::apply_activation_fn(current_layer);
             } else {
                 current_layer.activation_result = (*input).clone();
@@ -90,23 +97,38 @@ impl NeuralNet {
             previous_layer = Some(current_layer);
         }
     }
-    pub fn backward(&mut self, expected: &DVector<f64>) -> (Vec<DMatrix<f64>>, Vec<DVector<f64>>){
-        let mut w_grad : Vec<DMatrix<f64>> = Vec::new(); //Vector of weights
-        let mut b_grad : Vec<DVector<f64>> = Vec::new(); // Vector of biases
-        let output_error: DVector<f64>= DVector::from_data(self.loss_prime(expected).component_mul(&Self::sigmoid_prime(&self.layers[self.layers.len()-1].activation_result)).data);
+    pub fn backward(&mut self, expected: &DVector<f64>) -> (Vec<DMatrix<f64>>, Vec<DVector<f64>>) {
+        let mut w_grad: Vec<DMatrix<f64>> = Vec::new(); //Vector of weights
+        let mut b_grad: Vec<DVector<f64>> = Vec::new(); // Vector of biases
+        let output_error: DVector<f64> = DVector::from_data(
+            self.loss_prime(expected)
+                .component_mul(&Self::sigmoid_prime(
+                    &self.layers[self.layers.len() - 1].activation_result,
+                ))
+                .data,
+        );
         // Push the gradients of the output layer
         b_grad.push(output_error.clone());
-        w_grad.push(&output_error * &self.layers[self.layers.len() - 1 ].activation_result.transpose());
-       
-      
-        let mut delta :DVector<f64> = output_error;
-        for layer in self.layers.iter().rev(){
-            if layer.layer_number != self.layers.len()-1 {
-                let foo =  Self::sigmoid_prime(&layer.activation_result);
-                let bar = &(&self.layers[layer.layer_number + 1].weights.transpose() * &delta);
-                delta = Self::sigmoid_prime(&layer.activation_result).component_mul(&(&self.layers[layer.layer_number + 1].weights.transpose() * &delta));
+        w_grad.push(
+            &output_error
+                * &self.layers[self.layers.len() - 1]
+                    .activation_result
+                    .transpose(),
+        );
+
+        let mut delta: DVector<f64> = output_error;
+        for layer in self.layers.iter().rev() {
+            if layer.layer_number != self.layers.len() - 1 {
+                delta = Self::sigmoid_prime(&layer.activation_result).component_mul(
+                    &(&self.layers[layer.layer_number + 1].weights.transpose() * &delta),
+                );
                 b_grad.push(delta.clone());
-                w_grad.push(&delta * &self.layers[layer.layer_number.saturating_sub(1) ].activation_result.transpose());
+                w_grad.push(
+                    &delta
+                        * &self.layers[layer.layer_number.saturating_sub(1)]
+                            .activation_result
+                            .transpose(),
+                );
             }
         }
         (w_grad, b_grad)
@@ -131,4 +153,3 @@ impl NeuralNet {
         diff.map(|x| x * 2.0)
     }
 }
-
