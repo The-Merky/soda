@@ -30,7 +30,7 @@ impl NeuralNet {
                 layer_size,
                 activation_function,
                 layer_number,
-                self.layers[layer_number - 1].weights.ncols(),
+                self.layers[layer_number - 1].activation_result.nrows(),
             ));
             self.verify_and_sort();
         }
@@ -81,10 +81,9 @@ impl NeuralNet {
         let mut previous_layer: Option<&Layer> = None;
         for current_layer in &mut self.layers {
             if previous_layer.is_some() {
-                current_layer.activation_result = current_layer.weights.clone()
-                    * previous_layer.unwrap().activation_result.clone();
+                current_layer.activation_result =
+                    &current_layer.weights * &previous_layer.unwrap().activation_result + &current_layer.biases;
                 NeuralNet::apply_activation_fn(current_layer);
-                current_layer.activation_result += current_layer.biases.clone();
             } else {
                 current_layer.activation_result = (*input).clone();
             }
@@ -103,7 +102,9 @@ impl NeuralNet {
         let mut delta :DVector<f64> = output_error;
         for layer in self.layers.iter().rev(){
             if layer.layer_number != self.layers.len()-1 {
-                let delta: DVector<f64> = Self::sigmoid_prime(&layer.activation_result).component_mul(&(&self.layers[layer.layer_number + 1].weights.transpose() * &delta));
+                let foo =  Self::sigmoid_prime(&layer.activation_result);
+                let bar = &(&self.layers[layer.layer_number + 1].weights.transpose() * &delta);
+                delta = Self::sigmoid_prime(&layer.activation_result).component_mul(&(&self.layers[layer.layer_number + 1].weights.transpose() * &delta));
                 b_grad.push(delta.clone());
                 w_grad.push(&delta * &self.layers[layer.layer_number.saturating_sub(1) ].activation_result.transpose());
             }

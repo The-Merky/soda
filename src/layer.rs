@@ -1,5 +1,6 @@
-use nalgebra::{DMatrix, DVector, VecStorage};
+use nalgebra::{DMatrix, DVector};
 use rand::Rng;
+
 /*
 Layer struct for neural networks
 Contains a vector of weights and a vector of biases
@@ -27,16 +28,14 @@ impl Layer {
         weights: usize,
     ) -> Layer {
         let mut rng = rand::thread_rng();
-        let weights_field = {
-            if weights > 1 {
-                DMatrix::from_fn(size, weights, |_, _| rng.gen_range(-1.0..1.0))
-            } else {
-                DMatrix::from_element(size, size, 1.0)
-            }
-        };
+
+
+
         Layer {
             //Random weights between 1 and -1
-            weights: weights_field,
+            weights:  DMatrix::from_fn(size,weights, |_, _| {
+                    rng.gen_range(-1.0..=1.0)
+                }),
             biases: DVector::from_element(size, 1.0),
             activation: DVector::from_element(size,1.0),
             activation_fn: activation_function,
