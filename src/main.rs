@@ -6,9 +6,9 @@ pub mod neural_net;
 fn main() {
     let mut n = neural_net::NeuralNet::new();
     n.add_layer(0, 3, ActivationFunction::Relu);
-    n.add_layer(1, 12, ActivationFunction::Tanh);
-    n.add_layer(2, 12, ActivationFunction::Sigmoid);
-    n.add_layer(3, 12, ActivationFunction::Sigmoid);
-    n.add_layer(4, 10, ActivationFunction::Softmax);
-    println!("{:?}", n.backward(&DVector::from_element(10, 4.0)));
+    n.add_layer(1, 5, ActivationFunction::Tanh);
+    n.add_layer(2, 2, ActivationFunction::Softmax);
+    println!("{}", n.loss(&DVector::from_element(2, 4.0)).sum());
+ }
+    println!("{}", n.loss(&DVector::from_element(2, 4.0)).sum());
 }
