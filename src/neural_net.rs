@@ -1,7 +1,6 @@
 use core::panic;
-use std::collections::hash_map::VacantEntry;
 
-use nalgebra::{DMatrix, DVector};
+use nalgebra::DVector;
 
 use crate::layer::{ActivationFunction, Layer};
 
