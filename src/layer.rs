@@ -32,7 +32,7 @@ impl Layer {
         Layer {
             //Random weights between 1 and -1
             weights: DMatrix::from_fn(size, weights, |_, _| rng.gen_range(-1.0..=1.0)),
-            biases: DVector::from_element(size, 1.0),
+            biases: DVector::from_fn(size, |_,_|rng.gen_range(-1.0..=1.0)),
             activation: DVector::from_element(size, 1.0),
             activation_fn: activation_function,
             activation_result: DVector::from_element(size, 1.0),
