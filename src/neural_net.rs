@@ -5,7 +5,6 @@ use nalgebra::DVector;
 use crate::layer::{ActivationFunction, Layer};
 
 // Neural Network Struct which contains a vector of layers and can backpropagate and feed forward
-// TODO backpropagation
 pub struct NeuralNet {
     pub layers: Vec<Layer>,
 }
